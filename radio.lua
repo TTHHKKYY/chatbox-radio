@@ -152,7 +152,7 @@ function events.timer(timerid)
 			
 			if ok then
 				songtimer = os.startTimer(result:len() + 1) -- time until next song
-				song.stream = result:stream(118 * 1024) -- 2.5 second long chunks (2.51733)
+				song.stream = result:stream(118 * 1024) -- 2.5 second long chunks
 				events.speaker_audio_empty(speakername)
 			else
 				tell(song.user,result)
@@ -172,8 +172,9 @@ function events.speaker_audio_empty(name)
 			
 			if chunk then
 				-- the standard requires a chunk to be sent right
-				-- after the previous one ends, which basically guarantees the
-				-- audio will stutter or become distorted
+				-- after the previous one ends, which makes it very likely
+				-- for the audio on the client to stutter or become distorted
+				speaker.playAudio(chunk[1])
 				modem.transmit(dataport,dataport,
 				{
 					["buffer"] = chunk[1],
@@ -182,7 +183,6 @@ function events.speaker_audio_empty(name)
 					["metadata"] = {},
 					["protocol"] = protocol
 				})
-				speaker.playAudio(chunk[1])
 			else
 				table.remove(queue.playing,1)
 				queue.playing[song.user] = nil
