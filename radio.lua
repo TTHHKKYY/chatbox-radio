@@ -174,15 +174,15 @@ function events.speaker_audio_empty(name)
 				-- the standard requires a chunk to be sent right
 				-- after the previous one ends, which makes it very likely
 				-- for the audio on the client to stutter or become distorted
-				speaker.playAudio(chunk[1])
 				modem.transmit(dataport,dataport,
 				{
 					["buffer"] = chunk[1],
 					["id"] = os.getComputerID(),
 					["station"] = hostname,
-					["metadata"] = {},
+					["metadata"] = {["requestedby"] = song.user,["songurl"] = song.url},
 					["protocol"] = protocol
 				})
+				speaker.playAudio(chunk[1])
 			else
 				table.remove(queue.playing,1)
 				queue.playing[song.user] = nil
@@ -200,6 +200,7 @@ while true do
 	
 	if event[1] == "terminate" then
 		modem.close(discoveryport)
+		speaker.stop()
 		return
 	end
 	
