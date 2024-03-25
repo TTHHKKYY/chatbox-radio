@@ -152,7 +152,7 @@ function events.timer(timerid)
 			
 			if ok then
 				songtimer = os.startTimer(result:len() + 1) -- time until next song
-				song.stream = result:stream(118 * 1024) -- 2.5 second long chunks
+				song.stream = result:stream(32 * 1024) -- 0.6 second long chunks
 				events.speaker_audio_empty(speakername)
 			else
 				tell(song.user,result)
@@ -171,9 +171,6 @@ function events.speaker_audio_empty(name)
 			local chunk = song.stream()
 			
 			if chunk then
-				-- the standard requires a chunk to be sent right
-				-- after the previous one ends, which makes it very likely
-				-- for the audio on the client to stutter or become distorted
 				modem.transmit(dataport,dataport,
 				{
 					["buffer"] = chunk[1],
